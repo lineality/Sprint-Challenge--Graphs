@@ -1,3 +1,5 @@
+
+
 from room import Room
 from player import Player
 from world import World
@@ -13,7 +15,7 @@ world = World()
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+map_file = "main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -229,14 +231,12 @@ rooms_visited_set.add(0)
 while rooms_visited_set != set_of_all_room_numbers:
 
 # for testing (just 10 turns)
-# for i in range(10):
+#for i in range(10):
 
     # inspection
     print("Taking Another Step...!!!", step_counter)
 
-    # update edges on maps:
-    # print(current_room, previous_room)
-    dungeon_graph.add_edge_bidirectional(current_room, previous_room)
+
 
     ## move:
     ### each time go in a new direction
@@ -248,6 +248,9 @@ while rooms_visited_set != set_of_all_room_numbers:
 
         # dead end is where you can only go back, try right and left before going to last crossroads.
         
+        print("trying right", try_going_right[this_direction])
+        print("trying left", try_going_left[this_direction])
+
         # try going right:
         if try_going_right[this_direction] in player.current_room.get_exits():
             this_direction = try_going_right[this_direction]
@@ -268,17 +271,6 @@ while rooms_visited_set != set_of_all_room_numbers:
             ## check distance to each room on your crossraods list
             ## which rooms contain unexplored crossroads?
             ## check map-room-dictionaries for question-marks
-
-            # Step
-            # iterate through rooms_visited_set
-            # looking for a '?', 
-            # signifying unexplored crossroads
-            for room_id in rooms_visited_set:
-                # for visited room each room, check for '?'
-                if '?' in list(my_map[room_id].values()):
-                    # if '?' is found, add that room
-                    # to the new crossroads_set 
-                    crossroads_set.add(room_id)
 
             #print("crossroads_set1", crossroads_set)
             #print("rooms_visited_set1", rooms_visited_set)        
@@ -312,31 +304,45 @@ while rooms_visited_set != set_of_all_room_numbers:
             mask_min_distance = min(list(navigation_dict.keys()))
             crossroads_room_I_want = navigation_dict[mask_min_distance]
 
-            #print("crossroads_room_I_want ????", crossroads_room_I_want)
+            print("crossroads_room_I_want:", crossroads_room_I_want)
+            print("I am here now:", player.current_room.id)
+            print("BFS path", dungeon_graph.bfs_all_path(current_room, crossroads_room_I_want))
 
-            # TODO  step: quickmarch
+            # step: quickmarch
             # quickmarch all the steps to that crossroads
             # follow each step in traversal list, and add that step
             # to your traversal_path
-            
-
-            while current_room != crossroads_room_I_want:
-                # inspection
-                #print("quickmarch", current_room)
-                #print("crossroads_room_I_want",crossroads_room_I_want)
+            # each pass though this while loop takes one step closer
+            while player.current_room.id != crossroads_room_I_want:
+                # # inspection
+                # print("quickmarch current room 1", player.current_room.id)
+                # print("crossroads_room_I_want", crossroads_room_I_want)
+                # print("path", dungeon_graph.bfs_all_path(current_room, crossroads_room_I_want))
 
                 # get id of the next_room_along_the_way
-                # note: the 'first' room is the current room
-                # so you want the 2nd room
-                next_room_along_the_way = dungeon_graph.bfs_all_path(current_room, crossroads_room_I_want)[1]
+                # note: the 'first' [0] room is the current room
+                # so you want the 2nd room [1]
+                next_room_along_the_way = dungeon_graph.bfs_all_path(player.current_room.id, crossroads_room_I_want)[1]
 
                 # get directions to go to that room from current_room
-                here = my_map[current_room]
-                # reverse(value -> key) lookup of which direction a room is in:
+                # make a mask:
+                here = my_map[player.current_room.id]
+                # reverse (value -> key) lookup of which direction the next room is in:
                 new_direction = list(here.keys())[list(here.values()).index(next_room_along_the_way)]
+
+                # # inspection
+                # print("moving to new room")
+                # print(player.current_room.id)
 
                 # go in that direction
                 player.travel(new_direction)
+
+                ######
+                ## Moved to New Room
+                ######
+
+                # # inspection
+                # print(player.current_room.id)
 
                 # Update Lists Maps and Variables:
                 # record your traversal path
@@ -346,25 +352,28 @@ while rooms_visited_set != set_of_all_room_numbers:
                 previous_room = current_room
                 # where you are
                 current_room = player.current_room.id
-
-                # set new direction
-                # keep picking new directions until you find a question-mark
-                direction_to_try = random.choice(player.current_room.get_exits())
                 
-                # inspection
-                print("room:", current_room)
-
-                while my_map[current_room][direction_to_try] != '?':
-                    direction_to_try = random.choice(player.current_room.get_exits())
-                # update 'this direction' 
-                this_direction = direction_to_try
-
+                # # # inspection
+                # print("quickmarch current room 1", current_room)
+                # print("crossroads_room_I_want",crossroads_room_I_want)
+                # print("crossroads_set", crossroads_set)
 
                 step_counter += 1
+
+            # TODO: where should this be?
+            # then, in the new room: pick a new direction
+            direction_to_try = random.choice(player.current_room.get_exits())
+            while my_map[current_room][direction_to_try] != '?':
+                direction_to_try = random.choice(player.current_room.get_exits())
+            # update 'this direction' 
+            this_direction = direction_to_try
+
+
 
     else: # if you can keep going int he same direction
         # go in that direction
         player.travel(this_direction)
+
 
     #####
     ## New Room
@@ -381,7 +390,11 @@ while rooms_visited_set != set_of_all_room_numbers:
         make_map(current_room)
 
     # add new room to the graph
-    dungeon_graph.add_dungeon_vertex(current_room)
+    dungeon_graph.add_dungeon_vertex(player.current_room.id)
+
+    # update edges on maps:
+    # print(current_room, previous_room)
+    dungeon_graph.add_edge_bidirectional(current_room, previous_room)
 
     # record your traversal path
     traversal_path.extend([this_direction])
@@ -389,9 +402,9 @@ while rooms_visited_set != set_of_all_room_numbers:
     # # Step: update '?' in map for cross-roads
     # e.g. each time you go to a new room:
     # 1. the last room should be updated to include the new room
-    my_map[previous_room][this_direction] = current_room
+    my_map[previous_room][this_direction] = player.current_room.id
 
-    # 2. the new room should be update to include the old room   
+    # 2. the new room should be updated to include the old room   
     # use reverse direction to update 
     # the current room "backwards" to the last room
     my_map[current_room][reverse_direction_dict[this_direction]] = previous_room
@@ -401,6 +414,19 @@ while rooms_visited_set != set_of_all_room_numbers:
 
     # updated rooms_visited_set
     rooms_visited_set.add(player.current_room.id)
+
+    # Step
+    # iterate through rooms_visited_set
+    # looking for a '?', 
+    # signifying unexplored crossroads
+    #reset_crossroads
+    crossroads_set = set()
+    for room_id in rooms_visited_set:
+        # for visited room each room, check for '?'
+        if '?' in list(my_map[room_id].values()):
+            # if '?' is found, add that room
+            # to the new crossroads_set 
+            crossroads_set.add(room_id)
 
     step_counter += 1
 
@@ -412,6 +438,8 @@ while rooms_visited_set != set_of_all_room_numbers:
     print("this_direction", this_direction)
     print("rooms_visited_set", rooms_visited_set)
     print("crossroads_set", crossroads_set)
+    print("path:", traversal_path)
+    print("nodes", dungeon_graph.vertices)
     print(" \n")
 
     # for testing
