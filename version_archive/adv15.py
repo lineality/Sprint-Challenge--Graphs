@@ -333,145 +333,248 @@ print("alt BFS test", dd.bfs(1, 4))
 # for testing (just X turns)
 # for i in range(900):
 
-# keep walking until you visit every room:
-while len(rooms_visited_set) < 500:
 
-    # # inspection
-    # print(f"\n Taking Another Step (step: {step_counter})...!!! Now in room {player.current_room.id}.")
-    # print("# of rooms visited:", len(rooms_visited_set))
-    # # print("map so far...", my_map)
-    # # print("rooms_visited_set so far...", rooms_visited_set)
-    # print("crossroads_set so far...", crossroads_set)
-    # # print("Path so far...", traversal_path)
-    # print("\n")
 
-    ## plan for moving:
-    # first if-else: either you can keep going 'forward' 
-    # 
-    # there are 3 options if you cannot go in the same direction
-    # 1. go right
-    # 2. go left
-    # 3. go back to lass crossroads
+while len(traversal_path) > 1001 or len(traversal_path) == 0:
 
-    ## continue in same direction, unless not an option:
-    ## note: a dead end is where you can only go back, 
-    ## so try right and left before going to last crossroads.
-    ## No other options but 'go back,' go back to  
-    ## the nearest explored crossroads
+    # keep walking until you visit every room:
+    while len(rooms_visited_set) < 500:
 
-    # check for dead-end
-    # check if you have to 'to back' to the last unexplored crossroads path:
-    if this_direction not in player.current_room.get_exits() and try_going_right[this_direction] not in player.current_room.get_exits() and try_going_left[this_direction] not in player.current_room.get_exits():
+        # # inspection
+        # print(f"\n Taking Another Step (step: {step_counter})...!!! Now in room {player.current_room.id}.")
+        # print("# of rooms visited:", len(rooms_visited_set))
+        # # print("map so far...", my_map)
+        # # print("rooms_visited_set so far...", rooms_visited_set)
+        # print("crossroads_set so far...", crossroads_set)
+        # # print("Path so far...", traversal_path)
+        # print("\n")
 
-        # dead end is where you can only go back, try right and left before going to last crossroads.
-        # if you can't go right or left: go back to last unexplored crossroads:
+        ## plan for moving:
+        # first if-else: either you can keep going 'forward' 
+        # 
+        # there are 3 options if you cannot go in the same direction
+        # 1. go right
+        # 2. go left
+        # 3. go back to lass crossroads
 
-        #### Plans
-        ## Since you hit a dead end, find the closest path back to the nearest
-        ## unexplored crossroads:
-        ## check distance to each room on your crossraods list
-        ## which rooms contain unexplored crossroads?
-        ## check map-room-dictionaries for question-marks
+        ## continue in same direction, unless not an option:
+        ## note: a dead end is where you can only go back, 
+        ## so try right and left before going to last crossroads.
+        ## No other options but 'go back,' go back to  
+        ## the nearest explored crossroads
 
-        # find last crossroads
-        # print(f"\n Hit a dead end. Now in room {player.current_room.id}.")        
-        # start with a blank navidation dict:
-        # this will be filled with {distance : room} results
-        navigation_dict = {}
+        # check for dead-end
+        # check if you have to 'to back' to the last unexplored crossroads path:
+        if this_direction not in player.current_room.get_exits() and try_going_right[this_direction] not in player.current_room.get_exits() and try_going_left[this_direction] not in player.current_room.get_exits():
 
-        # # print inspection
-        #print("crossroads_set1", crossroads_set)
-        #print("rooms_visited_set1", rooms_visited_set)        
-        # print("Cross_roads search Print set:")
-        # print("rooms_visited_set1", rooms_visited_set)
-        # print("full path", dungeon_graph.bfs_all_path(current_room, this_room_id))
-        # print("bfs old path", dungeon_graph.bfs(current_room, this_room_id))
+            # dead end is where you can only go back, try right and left before going to last crossroads.
+            # if you can't go right or left: go back to last unexplored crossroads:
 
-        # Step: find next-closest-crossroads
-        # check which room in the crossroads_set is closest: 
-        # keep track of the distances using the navigation_dictionary
-        # {lenth of path : which room that is to}
+            #### Plans
+            ## Since you hit a dead end, find the closest path back to the nearest
+            ## unexplored crossroads:
+            ## check distance to each room on your crossraods list
+            ## which rooms contain unexplored crossroads?
+            ## check map-room-dictionaries for question-marks
 
-        # make an updated dictionary of distances to crossroads
-        # relative to where you are:
-        for this_room_id in crossroads_set:
-            # using mask for readability
-            # remove current room from path to next room
-            room_distance_mask = len(dungeon_graph.bfs_all_path(player.current_room.id, this_room_id)[1:])
-            # # Alt For Testing
-            room_distance_mask_alt = len(dd.bfs(player.current_room.id, this_room_id)[1:])
-            # make entry in navigation_dict
-            # {lenth of path : which room that is to}
-            navigation_dict[room_distance_mask] = this_room_id
+            # find last crossroads
+            # print(f"\n Hit a dead end. Now in room {player.current_room.id}.")        
+            # start with a blank navidation dict:
+            # this will be filled with {distance : room} results
+            navigation_dict = {}
 
-            # # inspection
-            # print("room_distance_mask_alt", room_distance_mask_alt)
-            # print("room_distance_mask", room_distance_mask)
+            # # print inspection
+            #print("crossroads_set1", crossroads_set)
+            #print("rooms_visited_set1", rooms_visited_set)        
+            # print("Cross_roads search Print set:")
+            # print("rooms_visited_set1", rooms_visited_set)
             # print("full path", dungeon_graph.bfs_all_path(current_room, this_room_id))
-            # print("room_distance_mask_alt", room_distance_mask_alt)
-            # print("current_room", current_room)
-            # print("player.current_room.id", player.current_room.id)
+            # print("bfs old path", dungeon_graph.bfs(current_room, this_room_id))
+
+            # Step: find next-closest-crossroads
+            # check which room in the crossroads_set is closest: 
+            # keep track of the distances using the navigation_dictionary
+            # {lenth of path : which room that is to}
+
+            # make an updated dictionary of distances to crossroads
+            # relative to where you are:
+            for this_room_id in crossroads_set:
+                # using mask for readability
+                # remove current room from path to next room
+                room_distance_mask = len(dungeon_graph.bfs_all_path(player.current_room.id, this_room_id)[1:])
+                # # Alt For Testing
+                room_distance_mask_alt = len(dd.bfs(player.current_room.id, this_room_id)[1:])
+                # make entry in navigation_dict
+                # {lenth of path : which room that is to}
+                navigation_dict[room_distance_mask] = this_room_id
+
+                # # inspection
+                # print("room_distance_mask_alt", room_distance_mask_alt)
+                # print("room_distance_mask", room_distance_mask)
+                # print("full path", dungeon_graph.bfs_all_path(current_room, this_room_id))
+                # print("room_distance_mask_alt", room_distance_mask_alt)
+                # print("current_room", current_room)
+                # print("player.current_room.id", player.current_room.id)
 
 
-        # pick the shortest distance in that list of crossroads distances
-        mask_min_distance = min(list(navigation_dict.keys()))
-        crossroads_room_I_want = navigation_dict[mask_min_distance]
+            # pick the shortest distance in that list of crossroads distances
+            mask_min_distance = min(list(navigation_dict.keys()))
+            crossroads_room_I_want = navigation_dict[mask_min_distance]
 
-        # Find the direction you want
-        # The direction you want is:
-        # the direction (n,w,e,s) to 
-        # the smallest (min) number 
-        # in list of keys (distances) in your distance dictionary
-        # hence: crossroads_room_I_want = the closest such room
+            # Find the direction you want
+            # The direction you want is:
+            # the direction (n,w,e,s) to 
+            # the smallest (min) number 
+            # in list of keys (distances) in your distance dictionary
+            # hence: crossroads_room_I_want = the closest such room
 
-        # # inspection 
-        # print("crossroads_room_I_want:", crossroads_room_I_want)
-        # print("I am here now:", player.current_room.id)
-        # print("BFS path 1", dungeon_graph.bfs_all_path(player.current_room.id, crossroads_room_I_want))
-        # print("BFS path 2", dd.bfs(player.current_room.id, crossroads_room_I_want))
-        
-        # step: quickmarch
-        # quickmarch all the steps to that crossroads
-        # follow each step in traversal list, and add that step
-        # to your traversal_path
-        # each pass though this while loop takes one step closer
-        # note: this might take you down a new path...maybe?
-        while player.current_room.id != crossroads_room_I_want:
-            # # inspection
-            # print(" \n Quickmarching, current room is:", player.current_room.id)
-            # print("crossroads_room_I_want", crossroads_room_I_want)
-            # print("path", dungeon_graph.bfs_all_path(current_room, crossroads_room_I_want))
+            # # inspection 
+            # print("crossroads_room_I_want:", crossroads_room_I_want)
+            # print("I am here now:", player.current_room.id)
+            # print("BFS path 1", dungeon_graph.bfs_all_path(player.current_room.id, crossroads_room_I_want))
+            # print("BFS path 2", dd.bfs(player.current_room.id, crossroads_room_I_want))
+            
+            # step: quickmarch
+            # quickmarch all the steps to that crossroads
+            # follow each step in traversal list, and add that step
+            # to your traversal_path
+            # each pass though this while loop takes one step closer
+            # note: this might take you down a new path...maybe?
+            while player.current_room.id != crossroads_room_I_want:
+                # # inspection
+                # print(" \n Quickmarching, current room is:", player.current_room.id)
+                # print("crossroads_room_I_want", crossroads_room_I_want)
+                # print("path", dungeon_graph.bfs_all_path(current_room, crossroads_room_I_want))
 
-            # get id of the next_room_along_the_way
-            # note: the 'first' [0] room is the current room
-            # so you want the 2nd room [1]
-            next_room_along_the_way = dungeon_graph.bfs_all_path(player.current_room.id, crossroads_room_I_want)[1]
-            next_room_along_the_way_alt = dd.bfs(player.current_room.id, crossroads_room_I_want)[1]
+                # get id of the next_room_along_the_way
+                # note: the 'first' [0] room is the current room
+                # so you want the 2nd room [1]
+                next_room_along_the_way = dungeon_graph.bfs_all_path(player.current_room.id, crossroads_room_I_want)[1]
+                next_room_along_the_way_alt = dd.bfs(player.current_room.id, crossroads_room_I_want)[1]
 
-            # get directions to go to that room from current_room
-            # make a mask:
-            here = my_map[player.current_room.id]
-            # Alt for testing
-            # here = my_map2[player.current_room.id]
+                # get directions to go to that room from current_room
+                # make a mask:
+                here = my_map[player.current_room.id]
+                # Alt for testing
+                # here = my_map2[player.current_room.id]
 
-            # reverse (value -> key) lookup of which direction the next room is in:
-            this_direction = list(here.keys())[list(here.values()).index(next_room_along_the_way)]
+                # reverse (value -> key) lookup of which direction the next room is in:
+                this_direction = list(here.keys())[list(here.values()).index(next_room_along_the_way)]
 
-            # # # inspection
-            # print("moving to new room")
-            # print("you are here:")
-            # print("current_room", current_room)
-            # print("player.current_room.id", player.current_room.id)
-            # print("\n Moving in this direction:")
-            # print("this_direction", this_direction)
-            # # print("nodes", dungeon_graph.vertices)
-            # # print("my_map", my_map)
-            # # print("compare, map2", my_map2)
-            # print("mask for 'here'", here)
+                # # # inspection
+                # print("moving to new room")
+                # print("you are here:")
+                # print("current_room", current_room)
+                # print("player.current_room.id", player.current_room.id)
+                # print("\n Moving in this direction:")
+                # print("this_direction", this_direction)
+                # # print("nodes", dungeon_graph.vertices)
+                # # print("my_map", my_map)
+                # # print("compare, map2", my_map2)
+                # print("mask for 'here'", here)
 
-            # print("next_room_along_the_way", next_room_along_the_way)
-            # print("next_room_along_the_way_alt", next_room_along_the_way_alt)
-            # print("step_counter", step_counter)
+                # print("next_room_along_the_way", next_room_along_the_way)
+                # print("next_room_along_the_way_alt", next_room_along_the_way_alt)
+                # print("step_counter", step_counter)
+
+                # # Move and update rooms
+                # for setting previous room
+                current_room = player.current_room.id
+                # # go in that direction
+                player.travel(this_direction)
+                # where you were
+                previous_room = current_room
+                # where you are
+                current_room = player.current_room.id
+
+                #####
+                ## New Room
+                #####
+
+                # if this is a new room
+                if player.current_room.id not in rooms_visited_set:
+
+                    # add to your map (add your current location)
+                    make_map(player.current_room.id)
+
+                    # add new room to the graph
+                    dungeon_graph.add_dungeon_vertex(player.current_room.id)
+
+                    # update edges on maps:
+                    # print(current_room, previous_room)
+                    dungeon_graph.add_edge_bidirectional(player.current_room.id, previous_room)
+
+                ## Updates for all moves:
+                # # Step: update '?' in map for cross-roads
+                # e.g. each time you go to a new room:
+                # 1. the last room should be updated to include the new room
+                my_map[previous_room][this_direction] = player.current_room.id
+
+                # 2. the new room should be updated to include the old room   
+                # use reverse direction to update 
+                # the current room "backwards" to the last room
+                my_map[player.current_room.id][reverse_direction_dict[this_direction]] = previous_room
+
+                # updated rooms_visited_set
+                rooms_visited_set.add(player.current_room.id)
+
+                # Step: update the crossroads set
+                # iterate through rooms_visited_set
+                # looking for a '?', 
+                # signifying unexplored crossroads
+                #reset_crossroads
+                crossroads_set = set()
+                for room_id in rooms_visited_set:
+                    # for visited room each room, check for '?'
+                    if '?' in list(my_map[room_id].values()):
+                        # if '?' is found, add that room
+                        # to the new crossroads_set 
+                        crossroads_set.add(room_id)
+
+                # Record your traversal path
+                # Even if you have been there before!!
+                traversal_path.extend([this_direction])
+                step_counter += 1
+
+                ### end of "dead end" fork
+
+            # Then, at the crossroads: pick a new direction
+            direction_to_try = random.choice(player.current_room.get_exits())
+            # check to see if that new door has not yet been opened (must be '?' on my_map)
+            while my_map[player.current_room.id][direction_to_try] != '?':
+                direction_to_try = random.choice(player.current_room.get_exits())
+            # update 'this direction' 
+            this_direction = direction_to_try
+
+            # print inspection
+            # print("\n Picking a crossroads: let's go", this_direction)
+
+        # so, not dead end:
+        else: # if you can keep going (stright, left or right)
+            
+            ## if you can, keep going straight (nothing to change in that case)
+            if this_direction in player.current_room.get_exits():
+                pass
+
+            # otherwise, if either right or left is an option...
+            elif try_going_right[this_direction] in player.current_room.get_exits() or try_going_left[this_direction] in player.current_room.get_exits():
+                
+                if try_going_right[this_direction] in player.current_room.get_exits() and try_going_left[this_direction] in player.current_room.get_exits():
+                    choice1 = [try_going_right[this_direction], try_going_left[this_direction]]
+                    this_direction = random.choice(choice1)
+
+                # if not left, go right:
+                elif try_going_left[this_direction] not in player.current_room.get_exits():
+                    this_direction = try_going_right[this_direction]
+
+                    # inspection
+                    # print("change to", this_direction)
+
+                else:  # otherwise: go left
+                    this_direction = try_going_left[this_direction]
+
+                    # inspection
+                    # print("change to", this_direction)
 
             # # Move and update rooms
             # for setting previous room
@@ -501,6 +604,7 @@ while len(rooms_visited_set) < 500:
                 dungeon_graph.add_edge_bidirectional(player.current_room.id, previous_room)
 
             ## Updates for all moves:
+
             # # Step: update '?' in map for cross-roads
             # e.g. each time you go to a new room:
             # 1. the last room should be updated to include the new room
@@ -532,122 +636,27 @@ while len(rooms_visited_set) < 500:
             traversal_path.extend([this_direction])
             step_counter += 1
 
-            ### end of "dead end" fork
+            ### end of "not dead end" fork
 
-        # Then, at the crossroads: pick a new direction
-        direction_to_try = random.choice(player.current_room.get_exits())
-        # check to see if that new door has not yet been opened (must be '?' on my_map)
-        while my_map[player.current_room.id][direction_to_try] != '?':
-            direction_to_try = random.choice(player.current_room.get_exits())
-        # update 'this direction' 
-        this_direction = direction_to_try
+        # Inspection
+        # print("data from end of move: \n")
+        # print("this room", player.current_room.id)
+        # print("traversal_path", traversal_path)
+        # print("my map", my_map)
+        # print("this_direction", this_direction)
+        # print("rooms_visited_set", rooms_visited_set)
+        # print("crossroads_set", crossroads_set)
+        # print("path:", traversal_path)
+        # print("nodes", dungeon_graph.vertices)
+        # print(" \n")
 
-        # print inspection
-        # print("\n Picking a crossroads: let's go", this_direction)
+        # for testing
+        #break
 
-    # so, not dead end:
-    else: # if you can keep going (stright, left or right)
-        
-        ## if you can, keep going straight (nothing to change in that case)
-        if this_direction in player.current_room.get_exits():
-            pass
+    # Fill this out with directions to walk
+    # traversal_path = []
 
-        # otherwise, if either right or left is an option...
-        elif try_going_right[this_direction] in player.current_room.get_exits() or try_going_left[this_direction] in player.current_room.get_exits():
-            # if not left, go right:
-            if try_going_left[this_direction] not in player.current_room.get_exits():
-                this_direction = try_going_right[this_direction]
-
-                # inspection
-                # print("change to", this_direction)
-
-            else:  # otherwise: go left
-                this_direction = try_going_left[this_direction]
-
-                # inspection
-                # print("change to", this_direction)
-
-        # # Move and update rooms
-        # for setting previous room
-        current_room = player.current_room.id
-        # # go in that direction
-        player.travel(this_direction)
-        # where you were
-        previous_room = current_room
-        # where you are
-        current_room = player.current_room.id
-
-        #####
-        ## New Room
-        #####
-
-        # if this is a new room
-        if player.current_room.id not in rooms_visited_set:
-
-            # add to your map (add your current location)
-            make_map(player.current_room.id)
-
-            # add new room to the graph
-            dungeon_graph.add_dungeon_vertex(player.current_room.id)
-
-            # update edges on maps:
-            # print(current_room, previous_room)
-            dungeon_graph.add_edge_bidirectional(player.current_room.id, previous_room)
-
-        ## Updates for all moves:
-
-        # # Step: update '?' in map for cross-roads
-        # e.g. each time you go to a new room:
-        # 1. the last room should be updated to include the new room
-        my_map[previous_room][this_direction] = player.current_room.id
-
-        # 2. the new room should be updated to include the old room   
-        # use reverse direction to update 
-        # the current room "backwards" to the last room
-        my_map[player.current_room.id][reverse_direction_dict[this_direction]] = previous_room
-
-        # updated rooms_visited_set
-        rooms_visited_set.add(player.current_room.id)
-
-        # Step: update the crossroads set
-        # iterate through rooms_visited_set
-        # looking for a '?', 
-        # signifying unexplored crossroads
-        #reset_crossroads
-        crossroads_set = set()
-        for room_id in rooms_visited_set:
-            # for visited room each room, check for '?'
-            if '?' in list(my_map[room_id].values()):
-                # if '?' is found, add that room
-                # to the new crossroads_set 
-                crossroads_set.add(room_id)
-
-        # Record your traversal path
-        # Even if you have been there before!!
-        traversal_path.extend([this_direction])
-        step_counter += 1
-
-        ### end of "not dead end" fork
-
-    # Inspection
-    # print("data from end of move: \n")
-    # print("this room", player.current_room.id)
-    # print("traversal_path", traversal_path)
-    # print("my map", my_map)
-    # print("this_direction", this_direction)
-    # print("rooms_visited_set", rooms_visited_set)
-    # print("crossroads_set", crossroads_set)
-    # print("path:", traversal_path)
-    # print("nodes", dungeon_graph.vertices)
-    # print(" \n")
-
-    # for testing
-    #break
-
-# Fill this out with directions to walk
-# traversal_path = []
-
-print("path:", traversal_path)
+    print("path:", traversal_path)
 
 ###########################################
 

@@ -554,8 +554,13 @@ while len(rooms_visited_set) < 500:
 
         # otherwise, if either right or left is an option...
         elif try_going_right[this_direction] in player.current_room.get_exits() or try_going_left[this_direction] in player.current_room.get_exits():
+            
+            if try_going_right[this_direction] in player.current_room.get_exits() and try_going_left[this_direction] in player.current_room.get_exits():
+                choice1 = [try_going_right[this_direction], try_going_left[this_direction]]
+                this_direction = random.choice(choice1)
+
             # if not left, go right:
-            if try_going_left[this_direction] not in player.current_room.get_exits():
+            elif try_going_left[this_direction] not in player.current_room.get_exits():
                 this_direction = try_going_right[this_direction]
 
                 # inspection
